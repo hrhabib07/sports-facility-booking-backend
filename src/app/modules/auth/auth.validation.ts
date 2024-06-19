@@ -21,8 +21,15 @@ const userLoginSchema = z.object({
     password: z.string(),
   }),
 });
+// Zod schema for TUserLogin
+const forgotPasswordSchema = z.object({
+  body: z.object({
+    email: z.string().email(),
+  }),
+});
 
 export const AuthValidation = {
   userSignInSchema,
   userLoginSchema,
+  forgotPasswordSchema
 };

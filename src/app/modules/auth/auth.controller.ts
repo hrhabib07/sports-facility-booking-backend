@@ -4,7 +4,7 @@ import sendResponse from "../../utils/sendResponse";
 import { AuthServices } from "./auth.services";
 import config from "../../config";
 
-const signInUser = catchAsync(async (req, res, next) => {
+const signInUser = catchAsync(async (req, res) => {
   const result = await AuthServices.signInUserIntoDB(req.body);
   sendResponse(res, {
     success: true,
@@ -30,8 +30,18 @@ const logInUser = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const forgotPassword = catchAsync(async (req, res) => {
+  const result = await AuthServices.forgotPasswordService(req.body.email);
+  res.json({
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Reset Password Email send successfully",
+    data: result
+  });
+});
 
 export const authController = {
   signInUser,
   logInUser,
+  forgotPassword
 };

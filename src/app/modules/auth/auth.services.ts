@@ -5,6 +5,7 @@ import { TUserLogin, TUserSignIn } from "./auth.interface";
 import jwt from "jsonwebtoken";
 import { isPasswordMatch } from "./auth.utils";
 import config from "../../config";
+import { sendEmail } from "../../utils/sendEmail";
 
 const signInUserIntoDB = async (payload: TUserSignIn) => {
   // check if user Exist
@@ -61,7 +62,20 @@ const loginUserIntoDB = async (payload: TUserLogin) => {
   };
 };
 
+const forgotPasswordService = async (email: string) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "You are not a registered User")
+  }
+  const accessToken = jwt.sign({ email }, config.jwt_access_secret as string, { expiresIn: '10m' });
+
+  const resetPasswordUrl = `${config.forgot_password_url}?email=${email}&token=${accessToken}`;
+
+  sendEmail(email, resetPasswordUrl)
+}
+
 export const AuthServices = {
   signInUserIntoDB,
   loginUserIntoDB,
+  forgotPasswordService
 };
